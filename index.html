@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How well do you know your brand?</title>
+<style>
+  :root {
+    --allianz-blue: #003781;
+    --dark-blue: #112A52;
+    --blue-3: #139FD2;
+    --blue-4: #B5D9E6;
+    --teal: #00908D;
+    --bright-green: #5FCC89;
+    --orange: #F86100;
+    --white: #FFFFFF;
+    --text-dim: rgba(255,255,255,0.72);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Arial, "Segoe UI", Helvetica, sans-serif;
+    background: var(--dark-blue);
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .quiz-wrap {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .quiz-header {
+    margin-bottom: 20px;
+  }
+
+  .quiz-eyebrow {
+    color: var(--bright-green);
+    font-weight: bold;
+    font-size: 15px;
+    margin: 0 0 4px 0;
+  }
+
+  .quiz-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.25;
+  }
+
+  .quiz-sub {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin: 8px 0 0 0;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    margin: 24px 0 28px 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .card {
+    background: var(--allianz-blue);
+    border-radius: 10px;
+    padding: 28px 24px;
+  }
+
+  .q-count {
+    color: var(--blue-4);
+    font-size: 14px;
+    margin: 0 0 10px 0;
+  }
+
+  .q-text {
+    font-size: 19px;
+    font-weight: bold;
+    margin: 0 0 20px 0;
+    line-height: 1.4;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    text-align: left;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--white);
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .option-btn:hover {
+    background: rgba(255,255,255,0.14);
+  }
+
+  .option-btn:focus-visible {
+    outline: 3px solid var(--bright-green);
+    outline-offset: 2px;
+  }
+
+  .option-btn.correct {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+
+  .option-btn.incorrect {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .option-btn.dimmed {
+    opacity: 0.55;
+  }
+
+  .option-btn[disabled] {
+    cursor: default;
+  }
+
+  .next-row {
+    margin-top: 22px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .next-btn {
+    background: var(--teal);
+    color: var(--white);
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .next-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .next-btn:focus-visible {
+    outline: 3px solid var(--bright-green);
+    outline-offset: 2px;
+  }
+
+  /* results screen */
+  .results-score {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .results-score .big-num {
+    font-size: 48px;
+    font-weight: bold;
+    color: var(--bright-green);
+    line-height: 1;
+  }
+
+  .results-score .big-label {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-top: 6px;
+  }
+
+  .result-row {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding: 16px 0;
+  }
+
+  .result-row:first-of-type {
+    border-top: none;
+  }
+
+  .result-q {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+  }
+
+  .result-line {
+    font-size: 14px;
+    margin: 2px 0;
+  }
+
+  .result-line.your-answer.wrong {
+    color: var(--orange);
+  }
+
+  .result-line.your-answer.right {
+    color: var(--bright-green);
+  }
+
+  .result-line.correct-answer {
+    color: var(--blue-4);
+  }
+
+  .restart-row {
+    margin-top: 22px;
+    text-align: center;
+  }
+
+  .restart-btn {
+    background: transparent;
+    color: var(--bright-green);
+    border: 1px solid var(--bright-green);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .restart-btn:focus-visible {
+    outline: 3px solid var(--bright-green);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+
+  <div class="quiz-header">
+    <p class="quiz-eyebrow">ALLIANZ TECHNOLOGY</p>
+    <h1 class="quiz-title">How well do you know your brand?</h1>
+    <p class="quiz-sub">5 quick questions. See how well you know the rules.</p>
+  </div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="card" id="quizCard">
+    <p class="q-count" id="qCount">Question 1 of 5</p>
+    <p class="q-text" id="qText"></p>
+    <div class="options" id="optionsWrap"></div>
+    <div class="next-row">
+      <button class="next-btn" id="nextBtn">Next question</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="resultsCard">
+    <div class="results-score">
+      <div class="big-num" id="scoreNum">0 / 5</div>
+      <div class="big-label">correct</div>
+    </div>
+    <div id="resultsList"></div>
+    <div class="restart-row">
+      <button class="restart-btn" id="restartBtn">Retake the quiz</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const questions = [
+    {
+      q: "What's the preferred highlight accent color for Allianz Technology communications?",
+      options: ["Bright green", "Teal (dark green)", "Yellow", "Magenta"],
+      correct: 1
+    },
+    {
+      q: "Where must the Allianz logo always be positioned on a communication?",
+      options: ["Bottom right corner", "Centered at the top", "Top-left corner", "Wherever it fits best"],
+      correct: 2
+    },
+    {
+      q: 'What\'s the standard unit of clear space around the logo, the "eagle distance"?',
+      options: ["Twice the logo height", "Diagonal \u00f7 27", "A fixed 10px", "Half the page width"],
+      correct: 1
+    },
+    {
+      q: '"Allianz Technology" as wording is:',
+      options: [
+        "A logo lockup that can be recolored freely",
+        "Treated as a headline, used at content level, never attached to the logo",
+        "A descriptor placed directly beneath the Allianz logo",
+        "Always bold caps, no exceptions"
+      ],
+      correct: 1
+    },
+    {
+      q: "Which retired slogan should never be reintroduced?",
+      options: [
+        "Stepping Up. Because it matters.",
+        "Let's care for tomorrow. You. IT.",
+        "Leading IT with you.",
+        "Thrive though stability."
+      ],
+      correct: 2
+    }
+  ];
+
+  let current = 0;
+  let answered = false;
+  const userAnswers = new Array(questions.length).fill(null);
+
+  const qCount = document.getElementById('qCount');
+  const qText = document.getElementById('qText');
+  const optionsWrap = document.getElementById('optionsWrap');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressFill = document.getElementById('progressFill');
+  const quizCard = document.getElementById('quizCard');
+  const resultsCard = document.getElementById('resultsCard');
+  const scoreNum = document.getElementById('scoreNum');
+  const resultsList = document.getElementById('resultsList');
+  const restartBtn = document.getElementById('restartBtn');
+
+  function renderQuestion() {
+    answered = false;
+    nextBtn.classList.remove('visible');
+    const item = questions[current];
+    qCount.textContent = `Question ${current + 1} of ${questions.length}`;
+    qText.textContent = item.q;
+    progressFill.style.width = `${(current / questions.length) * 100}%`;
+
+    optionsWrap.innerHTML = '';
+    item.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.type = 'button';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => selectOption(idx));
+      optionsWrap.appendChild(btn);
+    });
+  }
+
+  function selectOption(idx) {
+    if (answered) return;
+    answered = true;
+    userAnswers[current] = idx;
+    const item = questions[current];
+    const buttons = optionsWrap.querySelectorAll('.option-btn');
+
+    buttons.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === item.correct) {
+        btn.classList.add('correct');
+      } else if (i === idx) {
+        btn.classList.add('incorrect');
+      } else {
+        btn.classList.add('dimmed');
+      }
+    });
+
+    nextBtn.classList.add('visible');
+    nextBtn.textContent = current === questions.length - 1 ? 'See your score' : 'Next question';
+  }
+
+  nextBtn.addEventListener('click', () => {
+    if (current < questions.length - 1) {
+      current++;
+      renderQuestion();
+    } else {
+      showResults();
+    }
+  });
+
+  function showResults() {
+    progressFill.style.width = '100%';
+    quizCard.classList.add('hidden');
+    resultsCard.classList.remove('hidden');
+
+    let score = 0;
+    resultsList.innerHTML = '';
+
+    questions.forEach((item, idx) => {
+      const isRight = userAnswers[idx] === item.correct;
+      if (isRight) score++;
+
+      const row = document.createElement('div');
+      row.className = 'result-row';
+
+      const qLine = document.createElement('p');
+      qLine.className = 'result-q';
+      qLine.textContent = `${idx + 1}. ${item.q}`;
+      row.appendChild(qLine);
+
+      const yourLine = document.createElement('p');
+      yourLine.className = `result-line your-answer ${isRight ? 'right' : 'wrong'}`;
+      yourLine.textContent = `Your answer: ${item.options[userAnswers[idx]]}`;
+      row.appendChild(yourLine);
+
+      if (!isRight) {
+        const correctLine = document.createElement('p');
+        correctLine.className = 'result-line correct-answer';
+        correctLine.textContent = `Correct answer: ${item.options[item.correct]}`;
+        row.appendChild(correctLine);
+      }
+
+      resultsList.appendChild(row);
+    });
+
+    scoreNum.textContent = `${score} / ${questions.length}`;
+  }
+
+  restartBtn.addEventListener('click', () => {
+    current = 0;
+    userAnswers.fill(null);
+    resultsCard.classList.add('hidden');
+    quizCard.classList.remove('hidden');
+    renderQuestion();
+  });
+
+  renderQuestion();
+</script>
+
+</body>
+</html>
